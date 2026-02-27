@@ -35,7 +35,7 @@ class _Request:
     ignore_eos: bool                       # If True, generate until max_tokens even after EOS
     future: concurrent.futures.Future      # Caller blocks on this; set when all prompts complete
     results: list = field(default_factory=list)          # GenerationOutput per prompt (None until done)
-    pending_indices: list = field(default_factory=list)  # Prompt indices not yet assigned to slots
+    pending_indices: list = field(default_factory=list)  # Prompt indices not yet assigned to slots, 
 
 
 class LLM:
