@@ -1,160 +1,68 @@
-# 现代AI推理与基础设施入门教程
+# 现代大模型推理与基础设施入门教程
 
-> **基于SimpleLLM项目 | 苏格拉底式学习法 | Mac可运行模拟器**
+> **基于 SimpleLLM | 从理论到源码 | 剖析极简推理引擎**
 
----
+欢迎来到 SimpleLLM 推理入门教程！如果你曾好奇 ChatGPT 或 Claude 背后的大模型是如何在 GPU 上快速吐出文字的，或者你在阅读 vLLM 等工业级推理引擎源码时感到无从下手，那么这套教程正是为你准备的。
 
-## 目录
+## 为什么要写这套教程？
 
-### 第一部分：AI推理全景图与核心概念
-- [1.1 从训练到推理：为什么需要专门的推理引擎？](./tutorial/01-intro.md)
-- [1.2 推理系统全景图](./tutorial/02-overview.md)
-- [1.3 核心术语体系](./tutorial/03-terminology.md)
+目前市面上的大多数教程要么只停留在宏观理论（例如“什么是 KV Cache”），要么一上来就让你看动辄十万行的工业级 C++ 代码（如 vLLM 或 TensorRT-LLM）。这在“懂理论”和“能写代码”之间留下了一道巨大的鸿沟。
 
-### 第二部分：Transformer推理原理详解
-- [2.1 自回归生成机制](./tutorial/04-autoregressive.md)
-- [2.2 KV Cache：推理效率的关键](./tutorial/05-kv-cache.md)
-- [2.3 Prefill与Decode：两个阶段的分工](./tutorial/06-prefill-decode.md)
+**本教程试图填补这道鸿沟。** 
 
-### 第三部分：现代推理引擎核心技术
-- [3.1 连续批处理（Continuous Batching）](./tutorial/07-batching.md)
-- [3.2 Paged Attention与内存管理](./tutorial/08-paged-attention.md)
-- [3.3 CUDA Graph优化](./tutorial/09-cuda-graphs.md)
-- [3.4 内核融合与Triton](./tutorial/10-kernel-fusion.md)
-- [3.5 量化与MoE优化](./tutorial/11-quantization-moe.md)
-
-### 第四部分：代码级理解与SimpleLLM解析
-- [4.1 SimpleLLM项目结构](./tutorial/12-project-structure.md)
-- [4.2 推理引擎核心代码解析](./tutorial/13-engine-code.md)
-- [4.3 模型定义与前向传播](./tutorial/14-model-code.md)
-- [4.4 Triton内核深度解析](./tutorial/15-triton-kernels.md)
-
-### 第五部分：GPU环境准备与租卡指南
-- [5.1 云GPU服务选择](./tutorial/16-cloud-gpu.md)
-- [5.2 RunPod租卡完整指南](./tutorial/17-runpod-setup.md)
-- [5.3 环境配置与依赖安装](./tutorial/18-environment.md)
-- [5.4 运行SimpleLLM推理](./tutorial/19-running-inference.md)
-
-### 第六部分：Mac模拟器与实践
-- [6.1 模拟器使用说明](./tutorial/20-simulator-intro.md)
-- [6.2 模拟器1：Tokenization与Attention可视化](./tutorial/21-sim-tokenization.md)
-- [6.3 模拟器2：批处理机制模拟](./tutorial/22-sim-batching.md)
-- [6.4 模拟器3：KV Cache动态演示](./tutorial/23-sim-kv-cache.md)
-
-### 第七部分：进阶学习路径
-- [7.1 扩展学习资源](./tutorial/24-resources.md)
-- [7.2 后续实践建议](./tutorial/25-next-steps.md)
+我们将以 **[SimpleLLM](../README.md)**（一个仅有 ~950 行代码、却包含了连续批处理、CUDA 图加速、Flash Attention 等现代核心技术的极简推理引擎）为解剖对象，带你从最基础的理论出发，一步步深入到每一行关键代码，最终理解高性能推理的本质。
 
 ---
 
-## 学习路线图
+## 📖 教程目录 (Chapters)
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                          AI推理与Infra入门学习路线                        │
-└─────────────────────────────────────────────────────────────────────────┘
+我们建议你按照顺序阅读，这 5 个章节将带你完成一次从宏观到微观、从理论到实践的完整旅程：
 
-第1周
-├── Day 1-2: 认知准备
-│   ├── AI推理全景图理解
-│   ├── 核心术语体系
-│   └── [可选] 运行模拟器1：Tokenization
-│
-├── Day 3-4: 理论基础  
-│   ├── 自回归生成机制
-│   ├── KV Cache原理
-│   └── Prefill/Decode分工
-│
-└── Day 5-7: 核心技ポ理解
-    ├── 连续批处理
-    ├── Paged Attention
-    └── [可选] 运行模拟器2：批处理
+### [Chapter 1: 从零理解 LLM 推理与性能瓶颈](./01-Foundations.md)
+*   **什么是自回归生成 (Autoregressive Generation)**
+*   **拆解生命周期：Prefill (预填充) 与 Decode (解码)**
+*   **推理的第一大痛点：为什么我们需要 KV Cache？**
+*   *适合人群：完全没有大模型推理概念的新手。*
 
-第2周
-├── Day 8-10: 代码级理解
-│   ├── SimpleLLM项目结构
-│   ├── 推理引擎核心
-│   └── Triton内核
-│
-├── Day 11-12: GPU环境
-│   ├── 租卡指南
-│   ├── 环境配置
-│   └── 运行推理
-│
-└── Day 13-14: 实践与进阶
-    ├── 运行实际推理
-    ├── 模拟器3：KV Cache
-    └── 扩展学习
+### [Chapter 2: 突破显存与吞吐极限：现代推理核心技术](./02-HighPerformanceCoreTech.md)
+*   **告别木桶效应：连续批处理 (Continuous / In-flight Batching)**
+*   **显存管理革命：Paged Attention 是如何借鉴操作系统内存分页的？**
+*   **CPU 开销克星：理解 CUDA Graphs**
+*   *适合人群：知道基础概念，但想深入理解现代推理引擎必备优化手段的开发者。*
 
-总计：约14天
-```
+### [Chapter 3: SimpleLLM 引擎架构与源码深度走读](./03-EngineArchitecture.md)
+*   **揭秘 `llm.py`：异步请求队列与后台推理循环**
+*   **手撕源码：连续批处理的优雅实现机制**
+*   **在代码中观察 Prefill 与 Decode 的分流执行**
+*   *适合人群：想看懂实际代码，了解如何用 Python 写出一个高并发调度的 AI 工程师。*
+
+### [Chapter 4: 极致的算子优化：Model 与 Kernel 融合](./04-ModelAndKernelFusion.md)
+*   **深入 `model/model.py`**
+*   **Flash Attention 2 的接入与实战**
+*   **算子融合 (Kernel Fusion) 的魔法：为什么要把操作合在一起？**
+*   **(进阶) 浅窥 Triton 算子与 MoE 机制**
+*   *适合人群：对底层模型计算、显存带宽瓶颈 (Memory-bound) 优化感兴趣的底层爱好者。*
+
+### [Chapter 5: 实战与模拟器：动手验证你的理解](./05-SimulatorAndPractice.md)
+*   **环境搭建与云 GPU (RunPod) 租用指南**
+*   **一行代码跑通 120B 大模型**
+*   **使用 Mac 模拟器：直观可视化观察 Batching 与 KV Cache 分配过程**
+*   *适合人群：所有想要动手跑一跑代码的人。*
 
 ---
 
-## 如何使用本教程
+## 🎯 学习目标与路线
 
-### 1. 学习模式
-本教程采用**苏格拉底式学习法**，每个概念都通过以下结构讲解：
+读完本教程后，你将能够：
 
-```
-📍 问题 (Question)
-   ↓ 启发思考
-💡 概念解释 (Concept)
-   ↓ 代码验证
-🔧 代码实现 (Code)
-   ↓ 延伸问题
-📝 练习题 (Exercise)
-```
+1.  **脱口而出**：解释清楚 KV Cache、Paged Attention、Continuous Batching、Prefill/Decode 等所有核心面试考点。
+2.  **读懂源码**：不仅能看懂 SimpleLLM 这 ~950 行代码，还能以此为跳板，去阅读 vLLM 等大型开源项目的源码。
+3.  **定位瓶颈**：明白推理过程中的 Memory-bound（显存带宽瓶颈）和 Compute-bound（计算瓶颈）分别发生在哪里，以及业界是如何优化它们的。
 
-### 2. Mac模拟器
-教程中的模拟器可以在Mac上运行，帮助你直观理解核心机制：
-
-```bash
-# 进入模拟器目录
-cd tutorial/simulator
-
-# 运行模拟器
-python simulator_1_tokenization.py
-python simulator_2_batching.py  
-python simulator_3_kv_cache.py
-```
-
-### 3. 代码阅读建议
-- 核心代码都标注了行号，便于对照仓库源码
-- 建议先运行模拟器理解概念，再阅读实际代码
-- 遇到不理解的地方，可以画图或添加打印语句调试
+### 学习建议
+*   **先看图，后看代码**：教程中包含大量的时序图和架构图，请务必先理解图形化的流程，再去看对应的源码。
+*   **动手运行**：理论是很枯燥的。强烈建议你在阅读完前两章后，直接跳到 [Chapter 5](./05-SimulatorAndPractice.md) 运行一下模拟器，通过可视化的日志验证你的猜想。
 
 ---
 
-## 预备知识
-
-本教程假设你具备以下基础知识：
-
-✅ **已掌握**
-- 深度学习基础（神经网络、反向传播）
-- Python编程能力
-- 基本的线性代数和概率论
-
-⏳ **将学会**
-- 推理引擎架构设计
-- GPU计算优化技术
-- 生产级AI系统部署
-
----
-
-## 反馈与交流
-
-如果你在学习过程中遇到问题：
-1. 先尝试运行模拟器，添加打印语句调试
-2. 查看SimpleLLM源码，对照教程讲解
-3. 记录问题，在社区寻求帮助
-
----
-
-## 开始学习
-
-➡️ [进入第一部分：AI推理全景图与核心概念](./tutorial/01-intro.md)
-
----
-
-*教程基于SimpleLLM项目编写，该项目是一个约950行的极简可扩展LLM推理引擎，适合学习现代推理技术。*
+准备好了吗？让我们进入 [**Chapter 1: 从零理解 LLM 推理与性能瓶颈**](./01-Foundations.md)。

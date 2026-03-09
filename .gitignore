@@ -3,3 +3,4 @@ gpt-oss-120b/
 __pycache__/
 *.pyc
 .cursor/
+.idea/
